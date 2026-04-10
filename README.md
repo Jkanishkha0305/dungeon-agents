@@ -28,7 +28,7 @@ This project simulates two `gpt-4o-mini` agents navigating an `8x8` solvable dun
 | **Language** | Python 3.11+ |
 | **LLM** | OpenAI Chat Completions (`gpt-4o-mini`) |
 | **Agent Interface** | OpenAI Function Calling (Tools) |
-| **Tracing** | Pydantic Schema + Local JSON + Langfuse (Optional) |
+| **Tracing** | Dataclass Schema + Local JSON + Langfuse (Optional) |
 | **Visualizer** | Vanilla HTML5 / CSS3 / JavaScript |
 
 ---
@@ -82,7 +82,7 @@ The project includes a **Legibility Viewer** located at `legibility/viewer.html`
 
 1. Open `legibility/viewer.html` in any modern browser.
 2. Start with a curated trace from `runs/submission/`.
-3. Drag and drop that JSON file into the viewer.
+3. Load that JSON file into the viewer using the file picker.
 4. Use the **Ground Truth vs. Belief** toggle to see what the agent *thought* vs. what was *actually* there.
 5. Navigate turns with `Arrow Keys` to inspect LLM reasoning and tool outputs.
 
