@@ -96,6 +96,9 @@ The project includes a **Legibility Viewer** located at `legibility/viewer.html`
 
 For hosted observability, the run loop also sends traces to **Langfuse** when `LANGFUSE_SECRET_KEY`, `LANGFUSE_PUBLIC_KEY`, and `LANGFUSE_BASE_URL` are configured.
 
+Example dashboard session:
+- [Langfuse session: `run_c7d46763`](https://us.cloud.langfuse.com/project/cmns1hn59056zad064xkznxkh/sessions/run_c7d46763)
+
 1. Open `legibility/viewer.html` in any modern browser.
 2. Start with a curated trace from `runs/submission/`.
 3. Load that JSON file into the viewer using the file picker.
