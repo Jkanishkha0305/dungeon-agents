@@ -103,6 +103,8 @@ def build_system_prompt(agent_id: str, other_agent_id: str) -> str:
         "adjacent cells and any queued messages delivered at the start of your turn.\n"
         "Pick exactly one tool each turn. Keep messages short and concrete. Prefer sharing "
         "facts that remain useful even if your teammate receives them one turn later.\n"
+        "Your recent conversation history contains summaries of your previous actions and their "
+        "outcomes. Use it to avoid repeating a failed action unless the state has changed.\n"
         "Do not invent map knowledge. If uncertain, observe or move conservatively."
     )
 

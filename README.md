@@ -81,9 +81,19 @@ python scripts/run_game.py --runs 5 --seed 42
 The project includes a **Legibility Viewer** located at `legibility/viewer.html`.
 
 1. Open `legibility/viewer.html` in any modern browser.
-2. Drag and drop a trace file from the `runs/` directory.
-3. Use the **Ground Truth vs. Belief** toggle to see what the agent *thought* vs. what was *actually* there.
-4. Navigate turns with `Arrow Keys` to inspect LLM reasoning and tool outputs.
+2. Start with a curated trace from `runs/submission/`.
+3. Drag and drop that JSON file into the viewer.
+4. Use the **Ground Truth vs. Belief** toggle to see what the agent *thought* vs. what was *actually* there.
+5. Navigate turns with `Arrow Keys` to inspect LLM reasoning and tool outputs.
+
+### Recommended Reviewer Traces
+
+- `runs/submission/failure_repeated_pickup_seed42.json`
+- `runs/submission/coordination_message_heavy_seed12.json`
+- `runs/submission/navigation_wander_seed42.json`
+- `runs/submission/observation_heavy_failure_seed21.json`
+
+These are curated real runs with no connection-error fallback output.
 
 ---
 

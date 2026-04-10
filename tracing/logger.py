@@ -16,69 +16,61 @@ class TraceLogger:
         self.output_path = self.runs_dir / f"{run_id}.json"
         self.events: list[dict[str, Any]] = []
         self._langfuse = None
-        self._trace = None
+        self._enabled = False
 
         try:
-            from langfuse import Langfuse
-
             secret_key = os.environ.get("LANGFUSE_SECRET_KEY")
             public_key = os.environ.get("LANGFUSE_PUBLIC_KEY")
-            host = os.environ.get("LANGFUSE_HOST", "https://cloud.langfuse.com")
+            base_url = os.environ.get("LANGFUSE_BASE_URL") or os.environ.get("LANGFUSE_HOST")
+            if base_url and not os.environ.get("LANGFUSE_BASE_URL"):
+                os.environ["LANGFUSE_BASE_URL"] = base_url
+
             if secret_key and public_key:
-                self._langfuse = Langfuse(
-                    secret_key=secret_key,
-                    public_key=public_key,
-                    host=host,
-                )
-                try:
-                    self._trace = self._langfuse.trace(
-                        id=run_id,
-                        name=f"dungeon-run-{run_id}",
-                    )
-                except Exception:
-                    self._trace = None
+                from langfuse import get_client
+
+                self._langfuse = get_client()
+                self._enabled = True
         except Exception:
             self._langfuse = None
-            self._trace = None
+            self._enabled = False
+
+    @property
+    def langfuse(self) -> Any | None:
+        return self._langfuse
+
+    @property
+    def enabled(self) -> bool:
+        return self._enabled and self._langfuse is not None
 
     def log_event(self, event: AgentEvent) -> None:
         event_dict = event.to_dict()
         self.events.append(event_dict)
 
-        if self._trace is None:
+        if not self.enabled:
             return
 
         try:
-            span = self._trace.span(
-                name=f"turn-{event.turn}",
-                input={
+            self._langfuse.update_current_span(
+                output={
+                    "tool_output": event.tool_output,
+                    "tool_success": event.tool_success,
+                    "diverged": event.diverged,
+                },
+                metadata={
+                    "turn": event.turn,
                     "agent_id": event.agent_id,
                     "tool_name": event.tool_name,
-                    "llm_input_summary": event.llm_input_summary,
-                },
-                output=event.tool_output,
-                metadata={
-                    "diverged": event.diverged,
+                    "tool_input": event.tool_input,
                     "divergence_reason": event.divergence_reason,
                     "game_phase": event.game_phase,
-                },
-            )
-            span.generation(
-                name=f"llm-{event.turn}",
-                model=event.llm_model,
-                input=event.llm_input_summary,
-                output=event.llm_output_text,
-                metadata={
-                    "tool_name": event.tool_name,
-                    "tool_input": event.tool_input,
-                    "tool_success": event.tool_success,
-                    "tool_duration_ms": event.tool_duration_ms,
-                    "llm_latency_ms": event.llm_latency_ms,
+                    "agents_at_exit": event.agents_at_exit,
+                    "llm_model": event.llm_model,
                     "llm_tokens_in": event.llm_tokens_in,
                     "llm_tokens_out": event.llm_tokens_out,
+                    "tool_duration_ms": event.tool_duration_ms,
+                    "llm_latency_ms": event.llm_latency_ms,
                 },
             )
-            span.end()
         except Exception:
             return
 
@@ -96,7 +88,7 @@ class TraceLogger:
             json.dump(payload, file_handle, indent=2, default=str)
         print(f"[trace] wrote {self.output_path} ({len(self.events)} events)")
 
-        if self._langfuse is not None:
+        if self.enabled:
             try:
                 self._langfuse.flush()
             except Exception:
