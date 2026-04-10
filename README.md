@@ -2,6 +2,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![OpenAI](https://img.shields.io/badge/LLM-GPT--4o--mini-green.svg)](https://openai.com/)
+[![Langfuse](https://img.shields.io/badge/observability-Langfuse-orange.svg)](https://langfuse.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Testing: Pytest](https://img.shields.io/badge/tests-pytest-white.svg)](https://docs.pytest.org/)
 
@@ -16,8 +17,21 @@ This project simulates two `gpt-4o-mini` agents navigating an `8x8` solvable dun
 ### Key Highlights
 *   **Deterministic World:** Authoritative server-side state with strict fog-of-war.
 *   **Structured Tracing:** Every turn records tool input/output, belief state, and ground truth.
+*   **Observability:** Local JSON traces are the primary artifact, with Langfuse integration for hosted trace inspection.
 *   **Failure Diagnosis:** Divergence highlighting for failed tool outcomes (e.g., trying to unlock a door without a key).
 *   **Delayed Messaging:** Agents communicate with a 1-turn delivery lag to simulate coordination challenges.
+
+### Project Screens
+
+#### Dungeon Trace Viewer
+
+![Dungeon trace viewer](assets/dungeon.png)
+
+#### Langfuse Trace View
+
+![Langfuse trace view](assets/langfuse.png)
+
+![Langfuse trace detail](assets/langfuse2.png)
 
 ---
 
@@ -80,11 +94,14 @@ python scripts/run_game.py --runs 5 --seed 42
 
 The project includes a **Legibility Viewer** located at `legibility/viewer.html`.
 
+For hosted observability, the run loop also sends traces to **Langfuse** when `LANGFUSE_SECRET_KEY`, `LANGFUSE_PUBLIC_KEY`, and `LANGFUSE_BASE_URL` are configured.
+
 1. Open `legibility/viewer.html` in any modern browser.
 2. Start with a curated trace from `runs/submission/`.
 3. Load that JSON file into the viewer using the file picker.
 4. Use the **Ground Truth vs. Belief** toggle to see what the agent *thought* vs. what was *actually* there.
 5. Navigate turns with `Arrow Keys` to inspect LLM reasoning and tool outputs.
+6. Optionally inspect the same run in Langfuse for turn-level trace metadata and hosted observability views.
 
 ### Recommended Reviewer Traces
 
